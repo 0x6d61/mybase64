@@ -34,7 +34,7 @@ exports.encode = string => {
         .map(i => zeropadding(i.toString(2), 8)).join("")
     //base64の使用に従い最後は4ビット分0を追加する
     const sixBitSplit = []
-    for (var i = 0; i < stringToBinary.length; i += 6) {
+    for (let i = 0; i < stringToBinary.length; i += 6) {
         sixBitSplit.push(stringToBinary.substr(i, 6))
     }
     //base64の使用に従い最後は4ビット分0を追加する
@@ -42,12 +42,19 @@ exports.encode = string => {
         const addZero = 6 - sixBitSplit[sixBitSplit.length - 1].length
         sixBitSplit[sixBitSplit.length - 1] += '0'.repeat(addZero)
     }
-    let stringToBase64 = sixBitSplit.map(i => conversionEncodeTable[i]).join('')
-    if (stringToBase64.length % 4 === 2) {
-        stringToBase64 += '='.repeat(2)
+    
+    let stringToBase64 = []
+        
+    for(let i = 0;i<sixBitSplit.length;i+=4) {
+        stringToBase64.push(sixBitSplit.slice(i,i+4).map(i => conversionEncodeTable[i]).join(''))
     }
 
-    return stringToBase64
+    if (4 > stringToBase64[stringToBase64.length-1].length) {
+        console.log(stringToBase64[stringToBase64.length-1].length)
+        stringToBase64[stringToBase64.length-1] += '='.repeat(4 - (stringToBase64[stringToBase64.length-1].length))
+    }
+
+    return stringToBase64.join('')
 }
 
 exports.decode = string => {
@@ -60,7 +67,7 @@ exports.decode = string => {
     
     //4つに切り出す
     const stringfourSlice = []
-    for(var i = 0;i<stringSliceEqual.length;i+=4) {
+    for(let i = 0;i<stringSliceEqual.length;i+=4) {
         stringfourSlice.push(stringSliceEqual.substr(i,4))
     }
 
@@ -68,7 +75,7 @@ exports.decode = string => {
         i.split("").map(s => conversionDecodeTable[s]).join('')
     ).join('')
     const hexArray = []
-    for(var i =0;i<base64toBinary.length;i+=8) {
+    for(let i =0;i<base64toBinary.length;i+=8) {
         hexArray.push(parseInt(base64toBinary.substr(i,8),2))
     }
     return new TextDecoder('utf-8').decode(Uint8Array.from(hexArray))
