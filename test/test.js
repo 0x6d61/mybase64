@@ -14,4 +14,7 @@ describe('decode',() => {
     it('QUJDREVG',() => {
         assert.equal(mybase64.decode('QUJDREVG'),'ABCDEF')
     })
+    it('MTIzNDU=',() => {
+        assert.equal(mybase64.decode('MTIzNDU='),'12345')
+    })
 })

@@ -19,6 +19,10 @@ const conversionEncodeTable = {
 
 const conversionDecodeTable = inverseObject(conversionEncodeTable)
 
+const count = (string,sep) => {
+    return string.split(sep).length-1
+}
+
 const zeropadding = (num, length) => {
     return ('0000000000' + num).slice(-length)
 }
@@ -44,13 +48,12 @@ exports.encode = string => {
     }
     
     let stringToBase64 = []
-        
+
     for(let i = 0;i<sixBitSplit.length;i+=4) {
         stringToBase64.push(sixBitSplit.slice(i,i+4).map(i => conversionEncodeTable[i]).join(''))
     }
 
     if (4 > stringToBase64[stringToBase64.length-1].length) {
-        console.log(stringToBase64[stringToBase64.length-1].length)
         stringToBase64[stringToBase64.length-1] += '='.repeat(4 - (stringToBase64[stringToBase64.length-1].length))
     }
 
@@ -60,7 +63,9 @@ exports.encode = string => {
 exports.decode = string => {
     let stringSliceEqual = ''
     if (string.includes('=')) {
-        stringSliceEqual = string.slice(0, -2)
+        const end = string.length - count(string,"=")
+        console.log(end)
+        stringSliceEqual = string.slice(0,end)
     }else{
         stringSliceEqual = string
     }
@@ -78,5 +83,5 @@ exports.decode = string => {
     for(let i =0;i<base64toBinary.length;i+=8) {
         hexArray.push(parseInt(base64toBinary.substr(i,8),2))
     }
-    return new TextDecoder('utf-8').decode(Uint8Array.from(hexArray))
+    return new TextDecoder('utf-8').decode(Uint8Array.from(hexArray)).replace('\0','')
 }

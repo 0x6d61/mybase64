@@ -1,3 +1,3 @@
 const mybase64 = require('./index.js')
 
-console.log(mybase64.encode('12345'))
+console.log(mybase64.decode('MTIzNDU='))
